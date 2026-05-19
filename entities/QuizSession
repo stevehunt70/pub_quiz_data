@@ -1,0 +1,48 @@
+{
+  "name": "QuizSession",
+  "type": "object",
+  "properties": {
+    "session_name": {
+      "type": "string",
+      "description": "Name/label for this quiz session"
+    },
+    "quiz_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the quiz was/will be used"
+    },
+    "question_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of questions used in this session"
+    },
+    "question_count": {
+      "type": "number",
+      "description": "Number of questions in this session"
+    },
+    "filters_used": {
+      "type": "object",
+      "description": "Filters that were applied when generating"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "finalized",
+        "used"
+      ],
+      "default": "draft",
+      "description": "Status of the quiz session"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Any notes about this quiz session"
+    }
+  },
+  "required": [
+    "session_name",
+    "quiz_date"
+  ]
+}

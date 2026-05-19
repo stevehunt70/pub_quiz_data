@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --background: 250 20% 6%;
+    --foreground: 240 10% 95%;
+    --card: 250 18% 10%;
+    --card-foreground: 240 10% 95%;
+    --popover: 250 18% 10%;
+    --popover-foreground: 240 10% 95%;
+    --primary: 270 60% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 250 15% 16%;
+    --secondary-foreground: 240 10% 90%;
+    --muted: 250 12% 14%;
+    --muted-foreground: 240 8% 55%;
+    --accent: 330 65% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 250 12% 18%;
+    --input: 250 12% 18%;
+    --ring: 270 60% 58%;
+    --chart-1: 270 60% 58%;
+    --chart-2: 330 65% 55%;
+    --chart-3: 200 70% 50%;
+    --chart-4: 45 80% 60%;
+    --chart-5: 150 60% 45%;
+    --radius: 0.75rem;
+    --sidebar-background: 250 20% 8%;
+    --sidebar-foreground: 240 10% 90%;
+    --sidebar-primary: 270 60% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 250 15% 14%;
+    --sidebar-accent-foreground: 240 10% 90%;
+    --sidebar-border: 250 12% 18%;
+    --sidebar-ring: 270 60% 58%;
+  }
+
+  .dark {
+    --background: 250 20% 6%;
+    --foreground: 240 10% 95%;
+    --card: 250 18% 10%;
+    --card-foreground: 240 10% 95%;
+    --popover: 250 18% 10%;
+    --popover-foreground: 240 10% 95%;
+    --primary: 270 60% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 250 15% 16%;
+    --secondary-foreground: 240 10% 90%;
+    --muted: 250 12% 14%;
+    --muted-foreground: 240 8% 55%;
+    --accent: 330 65% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 250 12% 18%;
+    --input: 250 12% 18%;
+    --ring: 270 60% 58%;
+    --chart-1: 270 60% 58%;
+    --chart-2: 330 65% 55%;
+    --chart-3: 200 70% 50%;
+    --chart-4: 45 80% 60%;
+    --chart-5: 150 60% 45%;
+    --sidebar-background: 250 20% 8%;
+    --sidebar-foreground: 240 10% 90%;
+    --sidebar-primary: 270 60% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 250 15% 14%;
+    --sidebar-accent-foreground: 240 10% 90%;
+    --sidebar-border: 250 12% 18%;
+    --sidebar-ring: 270 60% 58%;
+  }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "UsedQuestion",
+  "type": "object",
+  "properties": {
+    "question_id": {
+      "type": "string",
+      "description": "ID of the question that was used"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "ID of the quiz session it was used in"
+    },
+    "used_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date it was used"
+    }
+  },
+  "required": [
+    "question_id"
+  ]
+}
