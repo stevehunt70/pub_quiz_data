@@ -1,9 +1,15 @@
-//TEST: REender should see this
+//TEST: Render should see this
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import path from 'path'
 
 export default defineConfig({
   logLevel: 'error',
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   plugins: [
     react(),
   ],
