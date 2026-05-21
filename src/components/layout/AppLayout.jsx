@@ -1,5 +1,4 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
 import { Music, LayoutDashboard, Sparkles, History, Search, LogOut, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
