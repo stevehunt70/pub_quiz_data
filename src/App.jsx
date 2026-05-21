@@ -12,10 +12,14 @@ import GenerateQuiz from '@/pages/GenerateQuiz';
 import QuizHistory from '@/pages/QuizHistory';
 import ArtistLookup from '@/pages/ArtistLookup';
 
+// ⭐ FIXED VERSION ⭐
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth, authError, navigateToLogin } = useAuth();
+  const location = window.location.pathname;
 
-  if (isLoadingPublicSettings || isLoadingAuth) {
+  const isPublicRoute = location === "/welcome";
+
+  if (isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
@@ -23,15 +27,18 @@ const AuthenticatedApp = () => {
     );
   }
 
-  if (authError) {
-    if (authError.type === 'auth_required') {
-      navigateToLogin();
-      return null;
-    }
+  // Only redirect if NOT on a public route
+  if (!isPublicRoute && authError?.type === "auth_required") {
+    navigateToLogin();
+    return null;
   }
 
   return (
     <Routes>
+      {/* PUBLIC */}
+      <Route path="/welcome" element={<Landing />} />
+
+      {/* PROTECTED */}
       <Route element={<AppLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="/generate" element={<GenerateQuiz />} />
@@ -39,7 +46,7 @@ const AuthenticatedApp = () => {
         <Route path="/artist-lookup" element={<ArtistLookup />} />
       </Route>
 
-        <Route path="*" element={<PageNotFound />} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
