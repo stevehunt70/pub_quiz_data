@@ -7,18 +7,21 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(false);
   const [authError, setAuthError] = useState(null);
 
+  // -----------------------------
+  // Fetch current user (/auth/me)
+  // -----------------------------
   const fetchMe = async () => {
     try {
       setIsLoadingAuth(true);
       setAuthError(null);
+
       const me = await api.get('/auth/me');
       setUser(me);
     } catch (err) {
+      // No valid token → user is not authenticated
       setUser(null);
-      // if 401, treat as auth_required
       setAuthError({ type: 'auth_required', message: 'Authentication required' });
     } finally {
       setIsLoadingAuth(false);
@@ -29,17 +32,29 @@ export const AuthProvider = ({ children }) => {
     fetchMe();
   }, []);
 
+  // -----------------------------
+  // Redirect to login (public)
+  // -----------------------------
   const navigateToLogin = () => {
-    // For now, just send to /welcome (Landing) where login UI lives
-    window.location.href = '/welcome';
+    window.location.href = '/welcome'; // PUBLIC route
   };
 
+  // -----------------------------
+  // Login
+  // -----------------------------
   const login = async (email, password) => {
     const res = await api.post('/auth/login', { email, password });
+
+    // Save token
     localStorage.setItem('auth_token', res.token);
+
+    // Refresh user
     await fetchMe();
   };
 
+  // -----------------------------
+  // Logout
+  // -----------------------------
   const logout = () => {
     localStorage.removeItem('auth_token');
     setUser(null);
@@ -49,7 +64,6 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     isLoadingAuth,
-    isLoadingPublicSettings,
     authError,
     navigateToLogin,
     login,
