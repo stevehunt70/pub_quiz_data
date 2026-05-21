@@ -1,7 +1,7 @@
+// src/pages/QuizHistory.jsx
 import { useState } from 'react';
-import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,6 +9,7 @@ import { Calendar, ChevronDown, ChevronUp, Download, Trash2, FileText } from 'lu
 import { format } from 'date-fns';
 import { useToast } from '@/components/ui/use-toast';
 import QuestionCard from '@/components/generate/QuestionCard';
+import { api } from '@/api/client';
 
 const statusColors = {
   draft: 'bg-muted text-muted-foreground',
@@ -22,16 +23,14 @@ export default function QuizHistory() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: sessions, isLoading } = useQuery({
+  const { data: sessions = [], isLoading } = useQuery({
     queryKey: ['sessions'],
-    queryFn: () => base44.entities.QuizSession.list('-quiz_date', 100),
-    initialData: [],
+    queryFn: () => api.get('/sessions'),
   });
 
-  const { data: allQuestions } = useQuery({
+  const { data: allQuestions = [] } = useQuery({
     queryKey: ['allQuestions'],
-    queryFn: () => base44.entities.QuizQuestion.list('-created_date', 500),
-    initialData: [],
+    queryFn: () => api.get('/questions'),
   });
 
   const toggleExpand = (sessionId) => {
@@ -40,30 +39,34 @@ export default function QuizHistory() {
       return;
     }
     setExpandedId(sessionId);
-    const session = sessions.find(s => s.id === sessionId);
+    const session = sessions.find((s) => s.id === sessionId);
     if (session?.question_ids) {
       const qMap = {};
-      allQuestions.forEach(q => { qMap[q.id] = q; });
-      const qs = session.question_ids.map(id => qMap[id]).filter(Boolean);
-      setSessionQuestions(prev => ({ ...prev, [sessionId]: qs }));
+      allQuestions.forEach((q) => {
+        qMap[q.id] = q;
+      });
+      const qs = session.question_ids.map((id) => qMap[id]).filter(Boolean);
+      setSessionQuestions((prev) => ({ ...prev, [sessionId]: qs }));
     }
   };
 
   const handleStatusChange = async (session, newStatus) => {
-    await base44.entities.QuizSession.update(session.id, { status: newStatus });
+    await api.patch(`/sessions/${session.id}`, { status: newStatus });
     queryClient.invalidateQueries({ queryKey: ['sessions'] });
     toast({ title: `Quiz marked as ${newStatus}` });
   };
 
   const handleDelete = async (session) => {
-    await base44.entities.QuizSession.delete(session.id);
+    await api.delete(`/sessions/${session.id}`);
     queryClient.invalidateQueries({ queryKey: ['sessions'] });
     toast({ title: 'Quiz deleted' });
   };
 
   const handleDownload = (session) => {
     const qs = sessionQuestions[session.id] || [];
-    let text = `${session.session_name}\nDate: ${session.quiz_date ? format(new Date(session.quiz_date), 'dd MMMM yyyy') : 'N/A'}\n${'='.repeat(40)}\n\nQUESTIONS\n${'-'.repeat(40)}\n\n`;
+    let text = `${session.session_name}\nDate: ${
+      session.quiz_date ? format(new Date(session.quiz_date), 'dd MMMM yyyy') : 'N/A'
+    }\n${'='.repeat(40)}\n\nQUESTIONS\n${'-'.repeat(40)}\n\n`;
     qs.forEach((q, i) => {
       text += `${i + 1}. ${q.question_text}\n\n`;
     });
@@ -105,7 +108,7 @@ export default function QuizHistory() {
       )}
 
       <div className="space-y-3">
-        {sessions.map(session => (
+        {sessions.map((session) => (
           <Card key={session.id} className="bg-card border-border overflow-hidden">
             <div
               className="flex items-center justify-between p-4 cursor-pointer hover:bg-secondary/30 transition-colors"
@@ -126,18 +129,22 @@ export default function QuizHistory() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Badge className={statusColors[session.status] || statusColors.draft}>
-                  {session.status}
-                </Badge>
-                {expandedId === session.id ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+                <Badge className={statusColors[session.status] || statusColors.draft}>{session.status}</Badge>
+                {expandedId === session.id ? (
+                  <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                )}
               </div>
             </div>
 
             {expandedId === session.id && (
               <div className="border-t border-border p-4 space-y-4">
                 <div className="flex flex-wrap gap-2">
-                  <Select value={session.status} onValueChange={v => handleStatusChange(session, v)}>
-                    <SelectTrigger className="w-32 bg-secondary border-border h-9"><SelectValue /></SelectTrigger>
+                  <Select value={session.status} onValueChange={(v) => handleStatusChange(session, v)}>
+                    <SelectTrigger className="w-32 bg-secondary border-border h-9">
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="draft">Draft</SelectItem>
                       <SelectItem value="finalized">Finalized</SelectItem>
@@ -147,14 +154,17 @@ export default function QuizHistory() {
                   <Button variant="outline" size="sm" onClick={() => handleDownload(session)} className="gap-2">
                     <Download className="w-3.5 h-3.5" /> Download
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleDelete(session)} className="gap-2 text-destructive hover:text-destructive">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDelete(session)}
+                    className="gap-2 text-destructive hover:text-destructive"
+                  >
                     <Trash2 className="w-3.5 h-3.5" /> Delete
                   </Button>
                 </div>
 
-                {session.notes && (
-                  <p className="text-sm text-muted-foreground italic">{session.notes}</p>
-                )}
+                {session.notes && <p className="text-sm text-muted-foreground italic">{session.notes}</p>}
 
                 <div className="space-y-2">
                   {(sessionQuestions[session.id] || []).map((q, i) => (
