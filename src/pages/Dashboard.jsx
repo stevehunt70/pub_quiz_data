@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Sparkles, History, Search, Music2, FileText, CheckCircle, BarChart3 } from 'lucide-react';
