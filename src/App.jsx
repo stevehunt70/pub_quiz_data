@@ -34,7 +34,6 @@ const AuthenticatedApp = () => {
     <Routes>
       <Route element={<AppLayout />}>
         <Route index element={<Dashboard />} />
-        <Route path="/welcome" element={<Landing />} />
         <Route path="/generate" element={<GenerateQuiz />} />
         <Route path="/history" element={<QuizHistory />} />
         <Route path="/artist-lookup" element={<ArtistLookup />} />
